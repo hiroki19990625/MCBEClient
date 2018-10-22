@@ -4,12 +4,11 @@ import com.google.gson.Gson;
 import jp.dip.hmy2001.mcbeClient.network.mcbe.json.JwtHeader;
 import jp.dip.hmy2001.mcbeClient.utils.NetworkCipher;
 
+import javax.crypto.KeyAgreement;
 import java.io.ByteArrayInputStream;
 import java.io.DataInputStream;
 import java.net.InetAddress;
 import java.security.*;
-import javax.crypto.*;
-import javax.xml.bind.DatatypeConverter;
 import java.security.spec.X509EncodedKeySpec;
 import java.util.Base64;
 
@@ -49,7 +48,7 @@ public class MCBEClient {
     private void generatePrivateKey(){
         try{
             KeyPairGenerator keyPairGenerator = KeyPairGenerator.getInstance("EC");
-            secureRandom = SecureRandom.getInstance("NativePRNG");
+            secureRandom = SecureRandom.getInstance("Windows-PRNG");
 
             keyPairGenerator.initialize(384, secureRandom);
             KeyPair keyPair = keyPairGenerator.generateKeyPair();

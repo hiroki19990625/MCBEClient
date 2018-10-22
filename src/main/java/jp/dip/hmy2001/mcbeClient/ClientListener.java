@@ -5,13 +5,12 @@ import com.whirvis.jraknet.RakNetPacket;
 import com.whirvis.jraknet.client.RakNetClientListener;
 import com.whirvis.jraknet.protocol.Reliability;
 import com.whirvis.jraknet.session.RakNetServerSession;
-
 import jp.dip.hmy2001.mcbeClient.network.mcbe.GamePacket;
 import jp.dip.hmy2001.mcbeClient.network.mcbe.json.*;
 import jp.dip.hmy2001.mcbeClient.network.mcbe.protocol.*;
-import jp.dip.hmy2001.mcbeClient.utils.*;
+import jp.dip.hmy2001.mcbeClient.utils.BinaryStream;
+import jp.dip.hmy2001.mcbeClient.utils.CommandReader;
 
-import javax.xml.bind.DatatypeConverter;
 import java.time.Instant;
 import java.util.Arrays;
 import java.util.Base64;
@@ -19,6 +18,8 @@ import java.util.regex.Pattern;
 import java.util.zip.Deflater;
 
 public class ClientListener implements RakNetClientListener{
+    public static final int PROTOCOL = 291;
+
     private MCBEClient client;
     private ClientSession clientSession;
     private String username;
@@ -45,7 +46,7 @@ public class ClientListener implements RakNetClientListener{
         CommandReader.getInstance().unstashLine();
 
         LoginPacket loginPacket = new LoginPacket();
-        loginPacket.protocol = 282;
+        loginPacket.protocol = PROTOCOL;
 
         HugeChainData hugeChainData = new HugeChainData();
         hugeChainData.chain = new String[]{client.createJwt(createChainData())};
@@ -116,7 +117,26 @@ public class ClientListener implements RakNetClientListener{
                             sendPk.entityRuntimeId = this.entityRuntimeId;
                             sendBatchPacket(session, sendPk);
                         }
-                    break;}
+                        break;
+                    }
+                    case ProtocolInfo.AVAILABLE_COMMANDS_PACKET:
+                        AvailableCommandsPacket packet1 = new AvailableCommandsPacket();
+                        packet1.setBuffer(pk);
+                        packet1.decode();
+
+                        packet1.enums.forEach((key, value) ->
+                        {
+                            System.out.println(key);
+                            value.forEach((i) ->
+                            {
+                                System.out.println("Index: " + i + " >> " + packet1.enumValues.get(i));
+                            });
+                        });
+                        /*packet1.enumValues.forEach((val) ->
+                        {
+                            System.out.println(val);
+                        });*/
+                        break;
                     case ProtocolInfo.SERVER_TO_CLIENT_HANDSHAKE_PACKET:{
                         ServerToClientHandshakePacket receivePk = new ServerToClientHandshakePacket();
                         receivePk.setBuffer(pk);

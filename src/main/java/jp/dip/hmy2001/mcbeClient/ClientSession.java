@@ -3,7 +3,7 @@ package jp.dip.hmy2001.mcbeClient;
 import com.whirvis.jraknet.client.RakNetClient;
 import jp.dip.hmy2001.mcbeClient.utils.CommandReader;
 
-import java.net.*;
+import java.net.InetAddress;
 
 public class ClientSession extends Thread{
     private InetAddress serverAddress;
